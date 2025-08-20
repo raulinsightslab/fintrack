@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/model/user_register.dart';
-import 'package:flutter/foundation.dart';
+import 'package:fintrack/model/category.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,7 +12,11 @@ class DbHelper {
 
   static Database? _db;
 
-
+  Future<Database> get db async {
+    if (_db != null) return _db!;
+    _db = await initDb();
+    return _db!;
+  }
 
   Future<Database> initDb() async {
     final databasesPath = await getDatabasesPath();
@@ -32,14 +36,14 @@ class DbHelper {
           )
         ''');
 
-        // // Tabel kategori
-        // await db.execute('''
-        //   CREATE TABLE categories(
-        //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-        //     name TEXT,
-        //     type TEXT 
-        //   )
-        // ''');
+        // Tabel kategori
+        await db.execute('''
+          CREATE TABLE categories(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            type TEXT 
+          )
+        ''');
 
         // Tabel transaksi
         await db.execute('''
@@ -89,32 +93,32 @@ class DbHelper {
     return null;
   }
 
-  // // ---------------- CATEGORY ----------------
-  // Future<int> insertCategory(Category category) async {
-  //   final dbClient = await db;
-  //   return await dbClient.insert("categories", category.toMap());
-  // }
+  // ---------------- CATEGORY ----------------
+  Future<int> insertCategory(Category category) async {
+    final dbClient = await db;
+    return await dbClient.insert("categories", category.toMap());
+  }
 
-  // Future<List<Category>> getCategories() async {
-  //   final dbClient = await db;
-  //   final List<Map<String, dynamic>> result = await dbClient.query(
-  //     "categories",
-  //   );
-  //   return result.map((map) => Category.fromMap(map)).toList();
+  Future<List<Category>> getCategories() async {
+    final dbClient = await db;
+    final List<Map<String, dynamic>> result = await dbClient.query(
+      "categories",
+    );
+    return result.map((map) => Category.fromMap(map)).toList();
   }
 
   // ---------------- TRANSACTION ----------------
   Future<int> insertTransaction(TransactionModel transaction) async {
-    final db = await ;
-    return await dbClient.insert("transactions", trx.toMap());
+    final dbClient = await db;
+    return await dbClient.insert("transactions", transaction.toMap());
   }
 
-  Future<List<MyTransaction.Transaction>> getTransactions() async {
+  Future<List<TransactionModel>> getTransactions() async {
     final dbClient = await db;
     final List<Map<String, dynamic>> result = await dbClient.query(
       "transactions",
       orderBy: "date DESC",
     );
-    return result.map((map) => MyTransaction.Transaction.fromMap(map)).toList();
+    return result.map((map) => TransactionModel.fromMap(map)).toList();
   }
 }

@@ -5,47 +5,85 @@ class RekapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Dummy data pengeluaran & pemasukan
+    final totalPemasukan = 7000000;
+    final totalPengeluaran = 2000000;
+    final saldo = totalPemasukan - totalPengeluaran;
+
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Rekap Keuangan'),
         backgroundColor: const Color(0xFF0A0F24),
-        title: const Text(
-          "About Us",
-          style: TextStyle(
-            fontFamily: "Orbitron",
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
       ),
-      // drawer: CustomDrawer(),
-      body: Column(
-        children: [
-          SizedBox(height: 40),
-          Center(
-            child: Container(
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Color(0xFF142850),
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                """SharkNet adalah platform pintar yang membantu Anda mengelola informasi, memilih produk, dan mengatur pengingat dengan cepat serta mudah.
-Didesain dengan antarmuka sederhana dan fitur yang efisien, SharkNet hadir untuk mempermudah aktivitas sehari-hari Anda.
-
-Dibuat oleh: Raul Akbarullah
-Versi: 1.0.0""",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: "Arimo",
-                  height: 1.5,
-                  color: Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Ringkasan saldo
+            Card(
+              color: Colors.blue[50],
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Saldo Saat Ini',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Rp $saldo',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Pemasukan: Rp $totalPemasukan   Pengeluaran: Rp $totalPengeluaran',
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+
+            // Statistik sederhana
+            Card(
+              color: Colors.green[50],
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Statistik Bulanan',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      '• Bulan Januari: Pemasukan Rp 1.000.000, Pengeluaran Rp 500.000',
+                    ),
+                    Text(
+                      '• Bulan Februari: Pemasukan Rp 1.200.000, Pengeluaran Rp 700.000',
+                    ),
+                    Text(
+                      '• Bulan Maret: Pemasukan Rp 900.000, Pengeluaran Rp 400.000',
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
