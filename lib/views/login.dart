@@ -1,3 +1,7 @@
+import 'package:fintrack/extension/navigation.dart';
+import 'package:fintrack/sqflite/dbhelper.dart';
+import 'package:fintrack/views/register.dart';
+import 'package:fintrack/widget/botbar.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -94,7 +98,41 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    String email = _emailController.text.trim();
+                    String password = _passwordController.text.trim();
+
+                    if (email.isEmpty || password.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Email dan Password harus diisi"),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final dbHelper = DbHelper();
+                    final user = await dbHelper.getUserByEmailAndPassword(
+                      email,
+                      password,
+                    );
+
+                    if (user != null) {
+                      // Login berhasil
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Login berhasil, selamat datang ${user.nama}!",
+                          ),
+                        ),
+                      );
+                      context.pushNamed(Botbar.id);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Email atau Password salah")),
+                      );
+                    }
+                  },
                   child: const Text(
                     "Login",
                     style: TextStyle(fontSize: 18, color: Colors.white),
@@ -123,19 +161,29 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 30),
 
-              // Register text
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Don’t have an account? "),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const Text(
-                      "Register here",
-                      style: TextStyle(color: Colors.green),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    context.pushNamed(RegisterPage.id);
+                  },
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Don't have an account? ",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        TextSpan(
+                          text: "Register here",
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ),

@@ -1,4 +1,7 @@
-import 'package:fintrack/login.dart';
+import 'package:fintrack/views/login.dart';
+import 'package:fintrack/views/register.dart';
+import 'package:fintrack/widget/botbar.dart';
+import 'package:fintrack/widget/dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -32,7 +35,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       initialRoute: "/login",
-      routes: {"/login": (context) => LoginPage()},
+      routes: {
+        "/login": (context) => LoginPage(),
+        RegisterPage.id: (context) => RegisterPage(),
+        DashboardPage.id: (context) => DashboardPage(),
+        Botbar.id: (context) => Botbar(),
+        // "/botbar": (context) => Botbar(),
+      },
     );
   }
 }
