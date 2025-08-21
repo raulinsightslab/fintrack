@@ -1,8 +1,10 @@
 import 'package:fintrack/extension/navigation.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:fintrack/utils/app_color.dart';
 import 'package:fintrack/views/register.dart';
 import 'package:fintrack/widget/botbar.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,15 +22,16 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Logo
-              Image.asset("assets/image/logo_faztrack.png", height: 120),
+              // // Logo
+              // Image.asset("assets/image/logo_faztrack.png", height: 120),
+              Lottie.asset("assets/lottie/Piggy_Bank.json", height: 200),
               SizedBox(height: 20),
               // Title
               Text(
@@ -36,15 +39,15 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: AppColor.expense,
                 ),
               ),
               const SizedBox(height: 8),
               // Subtitle
               Text(
-                "Setiap Rupiah Tercatat,\nMasa Depan Terencana",
+                "Track Money,\nShape Your Future",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(fontSize: 16, color: AppColor.textPrimary),
               ),
               const SizedBox(height: 40),
 
@@ -53,8 +56,10 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: "Email",
+                  labelStyle: TextStyle(color: AppColor.textPrimary),
                   hintText: "Enter Your Email",
                   border: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.textPrimary),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -67,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
                   labelText: "Password",
+                  labelStyle: TextStyle(color: AppColor.textPrimary),
                   hintText: "Enter Your Password",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -93,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: AppColor.button,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -132,18 +138,18 @@ class _LoginPageState extends State<LoginPage> {
                   },
                   child: const Text(
                     "Login",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(fontSize: 18, color: AppColor.textPrimary),
                   ),
                 ),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
 
               // Or continue with
-              const Text(
+              Text(
                 "Or continue with",
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: AppColor.textPrimary),
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: 15),
 
               // Social Buttons
               Row(
@@ -156,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                   _socialButton("assets/image/icon_twitter.png"),
                 ],
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30),
 
               Center(
                 child: TextButton(
@@ -168,12 +174,12 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextSpan(
                           text: "Don't have an account? ",
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: AppColor.textPrimary),
                         ),
                         TextSpan(
                           text: "Register here",
                           style: TextStyle(
-                            color: Colors.green,
+                            color: AppColor.expense,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

@@ -28,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: AppColor.background,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
@@ -101,6 +101,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: "Password",
+                    labelStyle: TextStyle(color: AppColor.textPrimary),
                     hintText: "Enter your password",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -130,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 50,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: AppColor.button,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -194,7 +195,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                     child: Text(
                       "Register",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: AppColor.textPrimary,
+                      ),
                     ),
                   ),
                 ),
@@ -204,7 +208,13 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Sudah punya akun? "),
+                    Text(
+                      "Sudah punya akun? ",
+                      style: TextStyle(
+                        color: AppColor.textPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
@@ -212,7 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       child: const Text(
                         "Login di sini",
                         style: TextStyle(
-                          color: Colors.green,
+                          color: AppColor.expense,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

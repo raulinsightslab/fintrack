@@ -3,6 +3,7 @@ import 'package:fintrack/sharepreferenced/preferences.dart';
 import 'package:fintrack/views/dashboard.dart';
 import 'package:fintrack/views/login.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class Day16SplashScreen extends StatefulWidget {
   const Day16SplashScreen({super.key});
@@ -43,9 +44,10 @@ class _Day16SplashScreenState extends State<Day16SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset("assets/image/logo_faztrack.png"),
+              // Image.asset("assets/image/logo_faztrack.png"),
+              Lottie.asset("assets/lottie/Piggy_Bank.json", height: 250),
               SizedBox(height: 20),
-              // Text("Welcome"),
+              Text("Fintrack"),
             ],
           ),
         ),
