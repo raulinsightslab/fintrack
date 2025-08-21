@@ -1,5 +1,5 @@
 import 'package:fintrack/extension/navigation.dart';
-import 'package:fintrack/sqflite/dbhelper.dart';
+import 'package:fintrack/sqflite/db_helper.dart';
 import 'package:fintrack/views/register.dart';
 import 'package:fintrack/widget/botbar.dart';
 import 'package:flutter/material.dart';
@@ -111,11 +111,8 @@ class _LoginPageState extends State<LoginPage> {
                       return;
                     }
 
-                    final dbHelper = DbHelper();
-                    final user = await dbHelper.getUserByEmailAndPassword(
-                      email,
-                      password,
-                    );
+                    // final dbHelper = DbHelper();
+                    final user = await DbHelper.loginUser(email, password);
 
                     if (user != null) {
                       // Login berhasil

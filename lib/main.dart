@@ -1,10 +1,11 @@
+import 'package:fintrack/views/dashboard.dart';
 import 'package:fintrack/views/login.dart';
 import 'package:fintrack/views/register.dart';
 import 'package:fintrack/widget/botbar.dart';
-import 'package:fintrack/widget/dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  // initializeDateFormatting('id_ID');
   runApp(const MyApp());
 }
 

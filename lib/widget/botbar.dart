@@ -1,7 +1,7 @@
-import 'package:fintrack/widget/dashboard.dart';
+import 'package:fintrack/views/dashboard.dart';
+import 'package:fintrack/views/tambah.dart';
 import 'package:fintrack/widget/edit.dart';
 import 'package:fintrack/widget/rekap.dart';
-import 'package:fintrack/widget/tambah.dart';
 import 'package:flutter/material.dart';
 
 class Botbar extends StatefulWidget {

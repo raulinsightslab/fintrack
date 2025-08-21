@@ -1,6 +1,6 @@
 import 'package:fintrack/extension/navigation.dart';
 import 'package:fintrack/model/user_register.dart';
-import 'package:fintrack/sqflite/dbhelper.dart';
+import 'package:fintrack/sqflite/db_helper.dart';
 import 'package:fintrack/views/login.dart';
 import 'package:flutter/material.dart';
 
@@ -170,13 +170,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                         );
                       } else {
-                        final dbHelper = DbHelper();
+                        // final dbHelper = DbHelper();
                         final user = Userregist(
                           nama: nama,
                           email: email,
                           password: password,
                         );
-                        await dbHelper.insertUser(user);
+                        await DbHelper.registerUser(user);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Register Successful')),
                         );
