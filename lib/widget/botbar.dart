@@ -1,7 +1,7 @@
 import 'package:fintrack/views/dashboard.dart';
 import 'package:fintrack/views/tambah.dart';
-import 'package:fintrack/widget/edit.dart';
-import 'package:fintrack/widget/rekap.dart';
+import 'package:fintrack/views/edit.dart';
+import 'package:fintrack/views/rekap.dart';
 import 'package:flutter/material.dart';
 
 class Botbar extends StatefulWidget {
@@ -16,24 +16,21 @@ class _BotbarState extends State<Botbar> {
   int selectedindex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    DashboardPage(),
-    TambahPage(),
-    EditPage(),
-    RekapPage(),
+    const DashboardPage(),
+    const TambahPage(),
+    const EditPage(),
+    const RekapPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: _widgetOptions[selectedindex]),
+      body: _widgetOptions[selectedindex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Color(0xFF0A0F24),
+        backgroundColor: const Color(0xFF0A0F24),
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey[400],
-        selectedFontSize: 14,
-        unselectedFontSize: 14,
-        enableFeedback: true,
         currentIndex: selectedindex,
         onTap: (value) {
           setState(() {

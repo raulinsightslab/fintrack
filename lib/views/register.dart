@@ -1,8 +1,10 @@
 import 'package:fintrack/extension/navigation.dart';
 import 'package:fintrack/model/user_register.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:fintrack/utils/app_color.dart';
 import 'package:fintrack/views/login.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -23,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -33,25 +35,26 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Logo
-                Image.asset("assets/image/logo_faztrack.png", height: 120),
-                const SizedBox(height: 20),
+                Lottie.asset("assets/lottie/Piggy_Bank.json", height: 200),
+                // Image.asset("assets/image/logo_faztrack.png", height: 120),
+                SizedBox(height: 15),
 
                 // Title
-                const Text(
+                Text(
                   "Register Account",
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green,
+                    color: AppColor.expense,
                   ),
                 ),
                 const SizedBox(height: 10),
 
                 // Subtitle
-                const Text(
+                Text(
                   "Buat akun baru untuk mulai mencatat keuanganmu",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(fontSize: 16, color: AppColor.textPrimary),
                 ),
                 const SizedBox(height: 40),
 
@@ -60,6 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _nameController,
                   decoration: InputDecoration(
                     labelText: "Full Name",
+                    labelStyle: TextStyle(color: AppColor.textPrimary),
                     hintText: "Enter your full name",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -75,10 +79,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
+                    labelStyle: TextStyle(color: AppColor.textPrimary),
                     hintText: "Enter your email",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    border:
+                        // AppColor.textPrimary
+                        OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.textPrimary),
+                          borderRadius: BorderRadius.circular(10),
+                          // borderSide: AppColor.textPrimary,
+                        ),
                   ),
                   validator: (value) => value == null || !value.contains("@")
                       ? "Enter a valid email"

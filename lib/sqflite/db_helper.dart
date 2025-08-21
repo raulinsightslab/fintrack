@@ -1,65 +1,61 @@
+import 'package:fintrack/model/chart_data.dart';
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/model/user_register.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-//  await db.execute('''
-// //           CREATE TABLE transactions(
-// //             id INTEGER PRIMARY KEY AUTOINCREMENT,
-// //             userId INTEGER,
-// //             categoryId INTEGER,
-// //             amount REAL,
-// //             date TEXT,
-// //             note TEXT,
-// //             FOREIGN KEY (userId) REFERENCES userregist (id),
-// //             FOREIGN KEY (categoryId) REFERENCES categories (id)
-// //           )
-// //         ''');
-// //       },
-// //     );
-// //   }
 
 class DbHelper {
-  static Future<Database> databaseHelper() async {
+  static Database? _database;
+
+  static Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDb();
+    return _database!;
+  }
+
+  static Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
-    return openDatabase(
-      join(dbPath, 'login.db'),
+    final path = join(dbPath, 'fintrack.db');
+
+    return await openDatabase(
+      path,
+      version: 1,
       onCreate: (db, version) async {
-        //tabel buat user
-        await db.execute(
-          'CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, nama TEXT, email TEXT, password TEXT)',
-        );
-        //tabel buat transaction
+        // Tabel users
         await db.execute('''
-        CREATE TABLE transactions(
+          CREATE TABLE users(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nama TEXT,
+            email TEXT,
+            password TEXT
+          )
+        ''');
+
+        // Tabel transactions
+        await db.execute('''
+          CREATE TABLE transactions(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             userId INTEGER,
             categoryId TEXT,
             amount REAL,
             date TEXT,
             note TEXT,
-            type TEXT,
-            FOREIGN KEY (userId) REFERENCES userregist (id),
-            FOREIGN KEY (categoryId) REFERENCES categories (id)
+            type TEXT
           )
         ''');
       },
-      version: 1,
     );
   }
 
-  //--------------users-------------
-  static Future<void> registerUser(Userregist user) async {
-    final db = await databaseHelper();
-    await db.insert(
-      'users',
-      user.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+  //-------------- USERS --------------
+  static Future<int> registerUser(Userregist user) async {
+    final db = await database;
+    return await db.insert('users', user.toMap());
   }
 
   static Future<Userregist?> loginUser(String email, String password) async {
-    final db = await databaseHelper();
-    final List<Map<String, dynamic>> results = await db.query(
+    final db = await database;
+    final results = await db.query(
       'users',
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],
@@ -71,52 +67,130 @@ class DbHelper {
     return null;
   }
 
-  static Future<void> updateUser(Userregist user) async {
-    final db = await databaseHelper();
-    await db.update(
-      'users',
-      user.toMap(),
-      where: "id = ?",
-      whereArgs: [user.id],
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
-
-  static Future<void> deleteUser(int id) async {
-    final db = await databaseHelper();
-    await db.delete('users', where: "id = ?", whereArgs: [id]);
-  }
-
-  //------------transaction-------------
+  //------------ TRANSACTIONS ------------
   static Future<int> addTransaction(TransactionModel transaction) async {
-    final db = await databaseHelper();
-    return await db.insert(
-      'transactions',
-      transaction.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    final db = await database;
+    return await db.insert('transactions', transaction.toMap());
   }
 
-  // static Future<List>TransactionModel>> getAllTransaction() async{
-  static Future<List<TransactionModel>> getAllTransaction() async {
-    final db = await databaseHelper();
-    final List<Map<String, dynamic>> results = await db.query(
+  static Future<List<TransactionModel>> getAllTransactions() async {
+    final db = await database;
+    final results = await db.query('transactions', orderBy: 'date DESC');
+    return results.map((map) => TransactionModel.fromMap(map)).toList();
+  }
+
+  static Future<List<TransactionModel>> getTransactionsByUserId(
+    int userId,
+  ) async {
+    final db = await database;
+    final results = await db.query(
       'transactions',
+      where: 'userId = ?',
+      whereArgs: [userId],
       orderBy: 'date DESC',
     );
     return results.map((map) => TransactionModel.fromMap(map)).toList();
   }
 
-  static Future<double> getSaldo() async {
-    final List<TransactionModel> allTransaction = await getAllTransaction();
+  static Future<int> updateTransaction(TransactionModel transaction) async {
+    final db = await database;
+    return await db.update(
+      'transactions',
+      transaction.toMap(),
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+  }
+
+  static Future<int> deleteTransaction(int id) async {
+    final db = await database;
+    return await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
+  }
+
+  static Future<double> getSaldo(int userId) async {
+    final transactions = await getTransactionsByUserId(userId);
     double total = 0;
-    for (var transaction in allTransaction) {
-      if (transaction.type == 'Pemasukkan') {
+
+    for (var transaction in transactions) {
+      if (transaction.type == 'Pemasukan') {
         total += transaction.amount;
       } else if (transaction.type == 'Pengeluaran') {
         total -= transaction.amount;
       }
     }
     return total;
+  }
+
+  static Future<Map<String, double>> getMonthlySummary(
+    int userId,
+    DateTime month,
+  ) async {
+    final transactions = await getTransactionsByUserId(userId);
+    double pemasukan = 0;
+    double pengeluaran = 0;
+
+    for (var transaction in transactions) {
+      final transactionDate = transaction.date;
+      if (transactionDate.year == month.year &&
+          transactionDate.month == month.month) {
+        if (transaction.type == 'Pemasukan') {
+          pemasukan += transaction.amount;
+        } else {
+          pengeluaran += transaction.amount;
+        }
+      }
+    }
+    return {
+      'Pemasukan': pemasukan,
+      'Pengeluaran': pengeluaran,
+      'saldo': pemasukan - pengeluaran,
+    };
+  }
+
+  //---------Chart_Data---------
+  static Future<List<ChartData>> getChartData(
+    int userId,
+    DateTime month,
+  ) async {
+    final db = await database;
+
+    final firstDay = DateTime(month.year, month.month, 1);
+    final lastDay = DateTime(month.year, month.month + 1, 0);
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'transactions',
+      where: 'user_id = ? AND date BETWEEN ? AND ?',
+      whereArgs: [
+        userId,
+        firstDay.toIso8601String(),
+        lastDay.toIso8601String(),
+      ],
+    );
+
+    // Kelompokkan data berdasarkan kategori dan jenis transaksi
+    Map<String, double> categorySums = {};
+    Map<String, String> categoryTypes = {};
+
+    for (var map in maps) {
+      final category = map['category_id'];
+      final amount = map['amount'];
+      final type = map['type'];
+
+      if (categorySums.containsKey(category)) {
+        categorySums[category] = categorySums[category]! + amount;
+      } else {
+        categorySums[category] = amount;
+        categoryTypes[category] = type;
+      }
+    }
+
+    // Konversi ke List<ChartData>
+    return categorySums.entries.map((entry) {
+      return ChartData(
+        category: entry.key,
+        amount: entry.value,
+        type: categoryTypes[entry.key]!,
+      );
+    }).toList();
   }
 }

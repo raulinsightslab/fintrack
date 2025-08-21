@@ -1,9 +1,7 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
 
 class TambahPage extends StatefulWidget {
   static const id = '/add_page';
@@ -16,27 +14,27 @@ class TambahPage extends StatefulWidget {
 class _TambahPageState extends State<TambahPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _amountController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
 
-  String? _selectedCategoryId = 'Pemasukan';
-  // String selectedJenis = 'Pemasukan';
+  String _selectedType = 'Pemasukan';
+  String _selectedCategory = 'Gaji'; // Default value untuk kategori
   DateTime _selectedDate = DateTime.now();
 
-  int? _selectedUserId;
-  List<String> pemasukkan = ['Gaji', 'Bonus', 'Investasi'];
-  List<String> pengeluaran = ['Makan', 'Transportasi', 'Belanja'];
+  List<String> pemasukkanCategories = ['Gaji', 'Bonus', 'Investasi', 'Lainnya'];
+  List<String> pengeluaranCategories = [
+    'Makan',
+    'Transportasi',
+    'Belanja',
+    'Hiburan',
+    'Lainnya',
+  ];
 
-  // Contoh dummy data user & kategori
-  // final List<Map<String, dynamic>> _users = [
-  //   // {'id': 1, 'name': 'User 1'},
-  //   // {'id': 2, 'name': 'User 2'},
-  // ];
-
-  // final List<Map<String, dynamic>> _categories = [
-  //   {'id': 1, 'name': 'Pengeluaran'},
-  //   {'id': 2, 'name': 'Pemasukkan'},
-  // ];
+  @override
+  void initState() {
+    super.initState();
+    // Set kategori default berdasarkan jenis transaksi
+    _selectedCategory = _selectedType == 'Pemasukan' ? 'Gaji' : 'Makan';
+  }
 
   Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -52,251 +50,186 @@ class _TambahPageState extends State<TambahPage> {
     }
   }
 
-  // Future<void> _loadTransactions() async {
-  //   final data = await DbHelper.getAllTransaction();
-  //   setState(() {
-  //     _transactions = data;
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _loadTransactions();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0F24),
-        title: const Text(
-          "Tambah Transaksi",
-          style: TextStyle(
-            fontFamily: "Orbitron",
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+        title: const Text("Tambah Transaksi"),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // JENIS TRANSAKSI
+              DropdownButtonFormField<String>(
+                value: _selectedType,
+                decoration: const InputDecoration(
+                  labelText: 'Jenis Transaksi',
+                  border: OutlineInputBorder(),
+                ),
+                items: ['Pemasukan', 'Pengeluaran'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedType = newValue!;
+                    // Set kategori default berdasarkan jenis transaksi
+                    _selectedCategory = _selectedType == 'Pemasukan'
+                        ? 'Gaji'
+                        : 'Makan';
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // KATEGORI
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Kategori',
+                  border: OutlineInputBorder(),
+                ),
+                items:
+                    (_selectedType == 'Pemasukan'
+                            ? pemasukkanCategories
+                            : pengeluaranCategories)
+                        .map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        })
+                        .toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedCategory = newValue!;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Pilih kategori';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // JUMLAH
+              TextFormField(
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: "Jumlah (Rp)",
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Masukkan jumlah";
+                  }
+                  if (double.tryParse(value) == null) {
+                    return "Masukkan angka yang valid";
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // CATATAN
+              TextFormField(
+                controller: _noteController,
+                decoration: const InputDecoration(
+                  labelText: "Catatan",
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 16),
+
+              // TANGGAL
+              Row(
                 children: [
-                  Column(
-                    children: [Text("Selected User ID : $_selectedUserId")],
-                  ), // Pilih kategori
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(labelText: 'Jenis Transaksi'),
-                    value: _selectedCategoryId,
-                    items: ['Pemasukan', 'Pengeluaran'].map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedCategoryId = newValue!;
-                        _categoryController.text = '';
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Note
-                  TextFormField(
-                    controller: _noteController,
-                    decoration: const InputDecoration(
-                      labelText: "Catatan",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (val) =>
-                        val == null || val.isEmpty ? "Catatan kosong" : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Amount
-                  TextFormField(
-                    controller: _amountController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Jumlah (Rp)",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Jumlah kosong";
-                      }
-                      if (double.tryParse(value) == null) {
-                        return "Masukkan angka valid";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _categoryController.text.isEmpty
-                        ? null
-                        : _categoryController.text,
-                    items:
-                        (_selectedCategoryId == 'Pemasukan'
-                                ? pemasukkan
-                                : pengeluaran)
-                            .map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            })
-                            .toList(),
-                    onChanged: (newValue) {
-                      _categoryController.text = newValue!;
-                    },
-                    decoration: InputDecoration(labelText: 'Kategori'),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Pilih kategori';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-
-                  // Pilih tanggal
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Tanggal: ${DateFormat('yyyy-MM-dd').format(_selectedDate)}",
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => _pickDate(context),
-                        child: const Text("Pilih Tanggal"),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Center(
-                    // child: ElevatedButton(
-                    //   style: ElevatedButton.styleFrom(
-                    //     backgroundColor: const Color(0xFF142850),
-                    //     padding: const EdgeInsets.symmetric(
-                    //       horizontal: 40,
-                    //       vertical: 15,
-                    //     ),
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(12),
-                    //     ),
-                    //   ),
-                    //   onPressed: () async {
-                    //     if (_formKey.currentState!.validate()) {
-                    //       double amount = double.parse(_amountController.text);
-                    //       if (_selectedCategoryId == 'Pengeluaran') {
-                    //         amount = -amount; // jadi minus kalau pengeluaran
-                    //       }
-                    //       final transaksi = TransactionModel(
-                    //         userId: 1,
-                    //         categoryId: _selectedCategoryId ?? "",
-                    //         amount: amount,
-                    //         date: DateFormat(
-                    //           'yyyy-MM-dd',
-                    //         ).format(_selectedDate),
-                    //         note: _noteController.text,
-                    //       );
-                    //       await DbHelper.addTransaction(transaksi);
-                    //       // Reset form
-                    //       _noteController.clear();
-                    //       _amountController.clear();
-                    //       setState(() {
-                    //         _selectedCategoryId = null;
-                    //         _selectedDate = DateTime.now();
-                    //       });
-
-                    //       // _loadTransactions();
-                    //     }
-                    //   },
-                    //   child: const Text(
-                    //     "Simpan Transaksi",
-                    //     style: TextStyle(color: Colors.white, fontSize: 16),
-                    //   ),
-                    // ),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          double amount = double.parse(_amountController.text);
-                          if (_selectedCategoryId == 'Pengeluaran') {
-                            amount = -amount;
-                          }
-                          TransactionModel newTransaksi = TransactionModel(
-                            userId: _selectedUserId ?? 1,
-                            categoryId: _categoryController.text,
-                            amount: amount,
-                            date: DateFormat(
-                              'yyyy-MM-dd',
-                            ).format(_selectedDate),
-                            note: _noteController.text,
-                            type: _selectedCategoryId!,
-                          );
-                          await DbHelper.addTransaction(newTransaksi);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Transaksi berhasil disimpan"),
-                            ),
-                          );
-                          _noteController.clear();
-                          _amountController.clear();
-                          _categoryController.clear();
-                          setState(() {
-                            _selectedCategoryId = 'Pemasukan';
-                            _selectedDate = DateTime.now();
-                          });
-                        }
-                      },
-                      child: Text("Simpan Transaksi"),
-                    ),
+                  const Text("Tanggal: "),
+                  Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: () => _pickDate(context),
+                    child: const Text("Pilih Tanggal"),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // List transaksi
-            // ListView.builder(
-            //   shrinkWrap: true,
-            //   physics: const NeverScrollableScrollPhysics(),
-            //   itemCount: _transactions.length,
-            //   itemBuilder: (context, index) {
-            //     final trx = _transactions[index];
+              // TOMBOL SIMPAN
+              Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF0A0F24),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 15,
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // Pastikan kategori terpilih
+                      if (_selectedCategory.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Pilih kategori terlebih dahulu"),
+                          ),
+                        );
+                        return;
+                      }
 
-            //     // cari kategori sesuai id transaksi
-            //     // final kategori = _categories.firstWhere(
-            //     //   (c) => c['id'] == trx.categoryId,
-            //     //   orElse: () => {"name": "Tidak ada kategori"},
-            //     // );
+                      try {
+                        final transaction = TransactionModel(
+                          userId: 1, // Ganti dengan ID user yang login
+                          categoryId: _selectedCategory,
+                          amount: double.parse(_amountController.text),
+                          date: _selectedDate,
+                          note: _noteController.text,
+                          type: _selectedType,
+                        );
 
-            //     // return Card(
-            //     //   margin: const EdgeInsets.symmetric(vertical: 6),
-            //     //   elevation: 4,
-            //     //   child: ListTile(
-            //     //     title: Text("${['name']}"),
-            //     //     subtitle: Text("Tanggal: ${trx.date}"),
-            //     //     trailing: Text(
-            //     //       "Rp${trx.amount.toStringAsFixed(0)}",
-            //     //       style: const TextStyle(fontWeight: FontWeight.bold),
-            //     //     ),
-            //     //   ),
-            //     // );
-            //   },
-            // ),
-          ],
+                        await DbHelper.addTransaction(transaction);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Transaksi berhasil disimpan"),
+                          ),
+                        );
+
+                        // Reset form
+                        _noteController.clear();
+                        _amountController.clear();
+                        setState(() {
+                          _selectedType = 'Pemasukan';
+                          _selectedCategory = 'Gaji'; // Reset ke nilai default
+                          _selectedDate = DateTime.now();
+                        });
+
+                        // Navigator.push();
+                      } catch (e) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+                      }
+                    }
+                  },
+                  child: const Text(
+                    "Simpan Transaksi",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
