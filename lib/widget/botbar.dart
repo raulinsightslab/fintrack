@@ -1,3 +1,4 @@
+import 'package:fintrack/utils/app_color.dart';
 import 'package:fintrack/views/dashboard.dart';
 import 'package:fintrack/views/tambah.dart';
 import 'package:fintrack/views/edit.dart';
@@ -28,8 +29,8 @@ class _BotbarState extends State<Botbar> {
       body: _widgetOptions[selectedindex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: const Color(0xFF0A0F24),
-        selectedItemColor: Colors.white,
+        backgroundColor: AppColor.surface,
+        selectedItemColor: AppColor.button,
         unselectedItemColor: Colors.grey[400],
         currentIndex: selectedindex,
         onTap: (value) {
@@ -47,7 +48,7 @@ class _BotbarState extends State<Botbar> {
             label: "Tambah",
           ),
           BottomNavigationBarItem(icon: Icon(Icons.edit), label: "Edit"),
-          BottomNavigationBarItem(icon: Icon(Icons.filter_alt), label: "Rekap"),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: "Rekap"),
         ],
       ),
     );

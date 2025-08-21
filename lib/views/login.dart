@@ -53,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Email field
               TextFormField(
+                style: TextStyle(color: AppColor.textPrimary),
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: "Email",
@@ -68,6 +69,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // Password field
               TextFormField(
+                style: TextStyle(color: AppColor.textPrimary),
                 controller: _passwordController,
                 obscureText: _obscurePassword,
                 decoration: InputDecoration(
