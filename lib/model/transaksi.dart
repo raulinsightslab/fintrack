@@ -19,6 +19,7 @@ class TransactionModel {
   final double amount;
   final String date; // format yyyy-MM-dd
   final String note;
+  final String type;
 
   TransactionModel({
     this.id,
@@ -27,6 +28,7 @@ class TransactionModel {
     required this.amount,
     required this.date,
     required this.note,
+    required this.type,
   });
 
   // Convert ke Map (buat database)
@@ -38,6 +40,7 @@ class TransactionModel {
       'amount': amount,
       'date': date,
       'note': note,
+      'type': type,
     };
   }
 
@@ -50,6 +53,7 @@ class TransactionModel {
       amount: map['amount'],
       date: map['date'],
       note: map['note'],
+      type: map['type'],
     );
   }
 

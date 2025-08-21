@@ -37,6 +37,7 @@ class DbHelper {
             amount REAL,
             date TEXT,
             note TEXT,
+            type TEXT,
             FOREIGN KEY (userId) REFERENCES userregist (id),
             FOREIGN KEY (categoryId) REFERENCES categories (id)
           )
@@ -89,7 +90,11 @@ class DbHelper {
   //------------transaction-------------
   static Future<int> addTransaction(TransactionModel transaction) async {
     final db = await databaseHelper();
-    return await db.insert('transactions', transaction.toMap());
+    return await db.insert(
+      'transactions',
+      transaction.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   // static Future<List>TransactionModel>> getAllTransaction() async{
@@ -105,11 +110,11 @@ class DbHelper {
   static Future<double> getSaldo() async {
     final List<TransactionModel> allTransaction = await getAllTransaction();
     double total = 0;
-    for (var transaksi in allTransaction) {
-      if (transaksi.categoryId == 'Pemasukan') {
-        total += transaksi.amount;
-      } else {
-        total -= transaksi.amount;
+    for (var transaction in allTransaction) {
+      if (transaction.type == 'Pemasukkan') {
+        total += transaction.amount;
+      } else if (transaction.type == 'Pengeluaran') {
+        total -= transaction.amount;
       }
     }
     return total;

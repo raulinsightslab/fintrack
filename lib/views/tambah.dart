@@ -1,9 +1,12 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TambahPage extends StatefulWidget {
+  static const id = '/add_page';
   const TambahPage({super.key});
 
   @override
@@ -12,18 +15,17 @@ class TambahPage extends StatefulWidget {
 
 class _TambahPageState extends State<TambahPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _noteController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
 
+  String? _selectedCategoryId = 'Pemasukan';
+  // String selectedJenis = 'Pemasukan';
   DateTime _selectedDate = DateTime.now();
 
   int? _selectedUserId;
-  String? _selectedCategoryId;
-  List<String> pemasukkan = [];
-  List<String> pengeluaran = [];
-
-  List<TransactionModel> _transactions = [];
+  List<String> pemasukkan = ['Gaji', 'Bonus', 'Investasi'];
+  List<String> pengeluaran = ['Makan', 'Transportasi', 'Belanja'];
 
   // Contoh dummy data user & kategori
   // final List<Map<String, dynamic>> _users = [
@@ -31,10 +33,10 @@ class _TambahPageState extends State<TambahPage> {
   //   // {'id': 2, 'name': 'User 2'},
   // ];
 
-  final List<Map<String, dynamic>> _categories = [
-    {'id': 1, 'name': 'Pengeluaran'},
-    {'id': 2, 'name': 'Pemasukkan'},
-  ];
+  // final List<Map<String, dynamic>> _categories = [
+  //   {'id': 1, 'name': 'Pengeluaran'},
+  //   {'id': 2, 'name': 'Pemasukkan'},
+  // ];
 
   Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -50,18 +52,18 @@ class _TambahPageState extends State<TambahPage> {
     }
   }
 
-  Future<void> _loadTransactions() async {
-    final data = await DbHelper.getAllTransaction();
-    setState(() {
-      _transactions = data;
-    });
-  }
+  // Future<void> _loadTransactions() async {
+  //   final data = await DbHelper.getAllTransaction();
+  //   setState(() {
+  //     _transactions = data;
+  //   });
+  // }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadTransactions();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadTransactions();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,41 +88,10 @@ class _TambahPageState extends State<TambahPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Pilih user
-                  // DropdownButtonFormField<int>(
-                  //   value: _selectedUserId,
-                  //   decoration: const InputDecoration(
-                  //     labelText: "Pilih User",
-                  //     border: OutlineInputBorder(),
-                  //   ),
-                  //   items: _users.map((u) {
-                  //     return DropdownMenuItem<int>(
-                  //       value: u['id'],
-                  //       child: Text(u['name']),
-                  //     );
-                  //   }).toList(),
-                  //   onChanged: (val) => setState(() => _selectedUserId = val),
-                  //   validator: (val) => val == null ? "Pilih user" : null,
-                  // ),
-                  // const SizedBox(height: 16),
                   Column(
                     children: [Text("Selected User ID : $_selectedUserId")],
                   ), // Pilih kategori
                   DropdownButtonFormField<String>(
-                    // value: _selectedCategoryId,
-                    // decoration: const InputDecoration(
-                    //   labelText: "Pilih Kategori",
-                    //   border: OutlineInputBorder(),
-                    // ),
-                    // items: _categories.map((c) {
-                    //   return DropdownMenuItem<int>(
-                    //     value: c['id'],
-                    //     child: Text(c['name']),
-                    //   );
-                    // }).toList(),
-                    // onChanged: (val) =>
-                    //     setState(() => _selectedCategoryId = val),
-                    // validator: (val) => val == null ? "Pilih kategori" : null,
                     decoration: InputDecoration(labelText: 'Jenis Transaksi'),
                     value: _selectedCategoryId,
                     items: ['Pemasukan', 'Pengeluaran'].map((String value) {
@@ -158,15 +129,17 @@ class _TambahPageState extends State<TambahPage> {
                       labelText: "Jumlah (Rp)",
                       border: OutlineInputBorder(),
                     ),
-                    validator: (val) {
-                      if (val == null || val.isEmpty) return "Jumlah kosong";
-                      if (double.tryParse(val) == null) {
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Jumlah kosong";
+                      }
+                      if (double.tryParse(value) == null) {
                         return "Masukkan angka valid";
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     value: _categoryController.text.isEmpty
                         ? null
@@ -211,52 +184,83 @@ class _TambahPageState extends State<TambahPage> {
                     ],
                   ),
                   const SizedBox(height: 24),
-
                   Center(
+                    // child: ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor: const Color(0xFF142850),
+                    //     padding: const EdgeInsets.symmetric(
+                    //       horizontal: 40,
+                    //       vertical: 15,
+                    //     ),
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(12),
+                    //     ),
+                    //   ),
+                    //   onPressed: () async {
+                    //     if (_formKey.currentState!.validate()) {
+                    //       double amount = double.parse(_amountController.text);
+                    //       if (_selectedCategoryId == 'Pengeluaran') {
+                    //         amount = -amount; // jadi minus kalau pengeluaran
+                    //       }
+                    //       final transaksi = TransactionModel(
+                    //         userId: 1,
+                    //         categoryId: _selectedCategoryId ?? "",
+                    //         amount: amount,
+                    //         date: DateFormat(
+                    //           'yyyy-MM-dd',
+                    //         ).format(_selectedDate),
+                    //         note: _noteController.text,
+                    //       );
+                    //       await DbHelper.addTransaction(transaksi);
+                    //       // Reset form
+                    //       _noteController.clear();
+                    //       _amountController.clear();
+                    //       setState(() {
+                    //         _selectedCategoryId = null;
+                    //         _selectedDate = DateTime.now();
+                    //       });
+
+                    //       // _loadTransactions();
+                    //     }
+                    //   },
+                    //   child: const Text(
+                    //     "Simpan Transaksi",
+                    //     style: TextStyle(color: Colors.white, fontSize: 16),
+                    //   ),
+                    // ),
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF142850),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 15,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           double amount = double.parse(_amountController.text);
                           if (_selectedCategoryId == 'Pengeluaran') {
-                            amount = -amount; // jadi minus kalau pengeluaran
+                            amount = -amount;
                           }
-                          final transaksi = TransactionModel(
-                            userId: 1,
-                            categoryId: _selectedCategoryId ?? "",
+                          TransactionModel newTransaksi = TransactionModel(
+                            userId: _selectedUserId ?? 1,
+                            categoryId: _categoryController.text,
                             amount: amount,
                             date: DateFormat(
                               'yyyy-MM-dd',
                             ).format(_selectedDate),
                             note: _noteController.text,
+                            type: _selectedCategoryId!,
                           );
-
-                          await DbHelper.addTransaction(transaksi);
-
-                          // Reset form
+                          await DbHelper.addTransaction(newTransaksi);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Transaksi berhasil disimpan"),
+                            ),
+                          );
                           _noteController.clear();
                           _amountController.clear();
+                          _categoryController.clear();
                           setState(() {
-                            _selectedCategoryId = null;
+                            _selectedCategoryId = 'Pemasukan';
                             _selectedDate = DateTime.now();
                           });
-
-                          _loadTransactions();
                         }
                       },
-                      child: const Text(
-                        "Simpan Transaksi",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
+                      child: Text("Simpan Transaksi"),
                     ),
                   ),
                 ],
@@ -265,33 +269,33 @@ class _TambahPageState extends State<TambahPage> {
             const SizedBox(height: 24),
 
             // List transaksi
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _transactions.length,
-              itemBuilder: (context, index) {
-                final trx = _transactions[index];
+            // ListView.builder(
+            //   shrinkWrap: true,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   itemCount: _transactions.length,
+            //   itemBuilder: (context, index) {
+            //     final trx = _transactions[index];
 
-                // cari kategori sesuai id transaksi
-                final kategori = _categories.firstWhere(
-                  (c) => c['id'] == trx.categoryId,
-                  orElse: () => {"name": "Tidak ada kategori"},
-                );
+            //     // cari kategori sesuai id transaksi
+            //     // final kategori = _categories.firstWhere(
+            //     //   (c) => c['id'] == trx.categoryId,
+            //     //   orElse: () => {"name": "Tidak ada kategori"},
+            //     // );
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 6),
-                  elevation: 4,
-                  child: ListTile(
-                    title: Text("${kategori['name']}"),
-                    subtitle: Text("Tanggal: ${trx.date}"),
-                    trailing: Text(
-                      "Rp${trx.amount.toStringAsFixed(0)}",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                );
-              },
-            ),
+            //     // return Card(
+            //     //   margin: const EdgeInsets.symmetric(vertical: 6),
+            //     //   elevation: 4,
+            //     //   child: ListTile(
+            //     //     title: Text("${['name']}"),
+            //     //     subtitle: Text("Tanggal: ${trx.date}"),
+            //     //     trailing: Text(
+            //     //       "Rp${trx.amount.toStringAsFixed(0)}",
+            //     //       style: const TextStyle(fontWeight: FontWeight.bold),
+            //     //     ),
+            //     //   ),
+            //     // );
+            //   },
+            // ),
           ],
         ),
       ),
