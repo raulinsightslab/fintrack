@@ -1,5 +1,7 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:fintrack/utils/app_color.dart';
+import 'package:fintrack/widget/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,7 +16,7 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   List<TransactionModel> transaksiList = [];
   double totalSaldo = 0;
-  int currentUserId = 1; // Ganti dengan ID user yang login
+  int currentUserId = 1;
 
   final formatCurrency = NumberFormat.currency(
     locale: 'id_ID',
@@ -43,10 +45,12 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.background,
+      drawer: AppDrawer(),
       appBar: AppBar(
-        title: const Text("Dompet"),
+        title: Text("Dompet", style: TextStyle(color: AppColor.textPrimary)),
         centerTitle: true,
-        backgroundColor: const Color(0xFF0A0F24),
+        backgroundColor: AppColor.background,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -58,21 +62,24 @@ class _DashboardPageState extends State<DashboardPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              color: Colors.blueAccent,
+              color: AppColor.kartuSaldo,
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       "Saldo Dompet",
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                      style: TextStyle(
+                        color: AppColor.textPrimary,
+                        fontSize: 16,
+                      ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10),
                     Text(
                       formatCurrency.format(totalSaldo),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: AppColor.textPrimary,
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
@@ -83,7 +90,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       children: const [
                         Icon(
                           Icons.account_balance_wallet,
-                          color: Colors.white70,
+                          color: AppColor.textPrimary,
                           size: 28,
                         ),
                       ],
@@ -97,16 +104,23 @@ class _DashboardPageState extends State<DashboardPage> {
             // RIWAYAT TRANSAKSI TERBARU
             const Text(
               "Transaksi Terbaru",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColor.textPrimary,
+              ),
             ),
             const SizedBox(height: 10),
 
             Expanded(
               child: transaksiList.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         "Belum ada transaksi",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColor.textSecondary,
+                        ),
                       ),
                     )
                   : ListView.builder(
@@ -114,28 +128,35 @@ class _DashboardPageState extends State<DashboardPage> {
                       itemBuilder: (context, index) {
                         final transaction = transaksiList[index];
                         return Card(
+                          color: AppColor.surface,
                           margin: const EdgeInsets.symmetric(vertical: 4),
                           child: ListTile(
                             leading: Icon(
                               transaction.type == "Pemasukan"
-                                  ? Icons.arrow_downward
-                                  : Icons.arrow_upward,
+                                  // ? Icons.arrow_downward
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward,
+                              // : Icons.arrow_upward,
                               color: transaction.type == "Pemasukan"
-                                  ? Colors.green
-                                  : Colors.red,
+                                  ? AppColor.income
+                                  : AppColor.expense,
                             ),
-                            title: Text(transaction.note),
+                            title: Text(
+                              transaction.note,
+                              style: TextStyle(color: AppColor.textPrimary),
+                            ),
                             subtitle: Text(
                               DateFormat(
                                 'dd MMM yyyy',
                               ).format(transaction.date),
+                              style: TextStyle(color: AppColor.textSecondary),
                             ),
                             trailing: Text(
                               formatCurrency.format(transaction.amount),
                               style: TextStyle(
                                 color: transaction.type == "Pemasukan"
-                                    ? Colors.green
-                                    : Colors.red,
+                                    ? AppColor.income
+                                    : AppColor.expense,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -152,7 +173,7 @@ class _DashboardPageState extends State<DashboardPage> {
           Navigator.pushNamed(context, '/add_page').then((_) => _loadData());
         },
         backgroundColor: const Color(0xFF0A0F24),
-        child: const Icon(Icons.add, color: Colors.white),
+        child: Icon(Icons.add, color: AppColor.textPrimary),
       ),
     );
   }

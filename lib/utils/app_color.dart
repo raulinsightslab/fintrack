@@ -10,4 +10,7 @@ class AppColor {
   static const Color expense = Color(0xFFFF3B30);
   static const Color income = Color(0xFF007AFF);
   static const Color button = Color(0xFFFF453A);
+
+  static const Color kartuSaldo = Color(0xFFDC2626);
+  static const Color transaksi = Color(0xFF111111);
 }

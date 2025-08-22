@@ -35,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Logo
-                Lottie.asset("assets/lottie/Piggy_Bank.json", height: 200),
+                Lottie.asset("assets/lottie/Piggy_Bank.json", height: 230),
                 // Image.asset("assets/image/logo_faztrack.png", height: 120),
                 SizedBox(height: 15),
 
@@ -48,18 +48,19 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: AppColor.expense,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
 
                 // Subtitle
                 Text(
-                  "Buat akun baru untuk mulai mencatat keuanganmu",
+                  "Let's Join Us",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: AppColor.textPrimary),
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
 
                 // Name field
                 TextFormField(
+                  style: TextStyle(color: AppColor.textPrimary),
                   controller: _nameController,
                   decoration: InputDecoration(
                     labelText: "Full Name",
@@ -76,6 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 // Email field
                 TextFormField(
+                  style: TextStyle(color: AppColor.textPrimary),
                   controller: _emailController,
                   decoration: InputDecoration(
                     labelText: "Email",
@@ -97,6 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 // Password field
                 TextFormField(
+                  style: TextStyle(color: AppColor.textPrimary),
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
@@ -166,7 +169,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             return AlertDialog(
                               title: Text("Password Invalid"),
                               content: Text(
-                                "Password harus mengandung 6 karakter.",
+                                "Password must be contain 6 characters.",
                               ),
                               actions: [
                                 TextButton(
@@ -209,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Sudah punya akun? ",
+                      "Already have an account? ",
                       style: TextStyle(
                         color: AppColor.textPrimary,
                         fontWeight: FontWeight.bold,
@@ -220,7 +223,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.pop(context);
                       },
                       child: const Text(
-                        "Login di sini",
+                        "Login here",
                         style: TextStyle(
                           color: AppColor.expense,
                           fontWeight: FontWeight.bold,

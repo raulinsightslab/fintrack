@@ -100,8 +100,10 @@ class _RekapPageState extends State<RekapPage> {
                         return ListTile(
                           leading: Icon(
                             t.type == "Pemasukan"
-                                ? Icons.arrow_downward
-                                : Icons.arrow_upward,
+                                // ? Icons.arrow_downward
+                                // : Icons.arrow_upward,
+                                ? Icons.arrow_upward
+                                : Icons.arrow_downward,
                             color: t.type == "Pemasukan"
                                 ? Colors.green
                                 : Colors.red,

@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 8),
               // Subtitle
               Text(
-                "Track Money,\nShape Your Future",
+                "Track Money\nShape Your Future",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16, color: AppColor.textPrimary),
               ),

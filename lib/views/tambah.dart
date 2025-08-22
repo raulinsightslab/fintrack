@@ -1,5 +1,6 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:fintrack/utils/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -53,9 +54,13 @@ class _TambahPageState extends State<TambahPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: AppColor.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0F24),
-        title: const Text("Tambah Transaksi"),
+        backgroundColor: AppColor.background,
+        title: const Text(
+          "Tambah Transaksi",
+          style: TextStyle(color: AppColor.textPrimary),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

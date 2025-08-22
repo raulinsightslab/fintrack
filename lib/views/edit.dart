@@ -1,5 +1,6 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:fintrack/utils/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -68,8 +69,11 @@ class _EditPageState extends State<EditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0F24),
-        title: const Text("Edit Transaksi"),
+        backgroundColor: AppColor.background,
+        title: Text(
+          "Edit Transaksi",
+          style: TextStyle(color: AppColor.textPrimary),
+        ),
       ),
       body: transactions.isEmpty
           ? const Center(child: Text("Belum ada transaksi"))
