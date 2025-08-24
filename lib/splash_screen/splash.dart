@@ -50,7 +50,11 @@ class _Day16SplashScreenState extends State<Day16SplashScreen> {
               SizedBox(height: 6),
               Text(
                 "Fintrack",
-                style: TextStyle(fontSize: 35, color: AppColor.button),
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.button,
+                ),
               ),
               SizedBox(height: 10),
               Text(

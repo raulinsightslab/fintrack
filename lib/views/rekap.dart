@@ -54,12 +54,26 @@ class _RekapPageState extends State<RekapPage> {
         .fold(0, (sum, c) => sum + c.amount);
 
     return Scaffold(
-      drawer: AppDrawer(),
-      appBar: AppBar(title: const Text("Rekap Transaksi"), centerTitle: true),
+      backgroundColor: AppColor.background,
+      drawer: const AppDrawer(),
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColor.textPrimary),
+        backgroundColor: AppColor.background,
+        title: Text(
+          "Rekap Transaksi",
+          style: TextStyle(color: AppColor.textPrimary),
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: transaksi.isEmpty
-            ? Center(child: Text("Belum ada transaksi"))
+            ? Center(
+                child: Text(
+                  "Belum ada transaksi",
+                  style: TextStyle(color: AppColor.textPrimary),
+                ),
+              )
             : Column(
                 children: [
                   // ==== PIE CHART PEMASUKAN VS PENGELUARAN ====
@@ -73,8 +87,8 @@ class _RekapPageState extends State<RekapPage> {
                             value: totalIncome,
                             title: "Pemasukan\n${totalIncome.toInt()}",
                             radius: 80,
-                            titleStyle: const TextStyle(
-                              color: Colors.white,
+                            titleStyle: TextStyle(
+                              color: AppColor.textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -84,8 +98,8 @@ class _RekapPageState extends State<RekapPage> {
                             value: totalExpense,
                             title: "Pengeluaran\n${totalExpense.toInt()}",
                             radius: 80,
-                            titleStyle: const TextStyle(
-                              color: Colors.white,
+                            titleStyle: TextStyle(
+                              color: AppColor.textPrimary,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -100,30 +114,37 @@ class _RekapPageState extends State<RekapPage> {
                       itemCount: transaksi.length,
                       itemBuilder: (context, index) {
                         final t = transaksi[index];
-                        return ListTile(
-                          leading: Icon(
-                            t.type == "Pemasukan"
-                                // ? Icons.arrow_downward
-                                // : Icons.arrow_upward,
-                                ? Icons.arrow_upward
-                                : Icons.arrow_downward,
-                            color: t.type == "Pemasukan"
-                                ? Colors.green
-                                : Colors.red,
+                        return Card(
+                          color: AppColor.surface,
+                          margin: const EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 8,
                           ),
-                          title: Text(
-                            t.note.isNotEmpty ? t.note : t.categoryId,
-                          ),
-                          subtitle: Text(
-                            '${t.date.day}/${t.date.month}/${t.date.year}',
-                          ),
-                          trailing: Text(
-                            "Rp ${t.amount.toStringAsFixed(0)}",
-                            style: TextStyle(
+                          child: ListTile(
+                            leading: Icon(
+                              t.type == "Pemasukan"
+                                  ? Icons.arrow_upward
+                                  : Icons.arrow_downward,
                               color: t.type == "Pemasukan"
-                                  ? Colors.green
-                                  : Colors.red,
-                              fontWeight: FontWeight.bold,
+                                  ? AppColor.income
+                                  : AppColor.expense,
+                            ),
+                            title: Text(
+                              t.note.isNotEmpty ? t.note : t.categoryId,
+                              style: TextStyle(color: AppColor.textPrimary),
+                            ),
+                            subtitle: Text(
+                              '${t.date.day}/${t.date.month}/${t.date.year}',
+                              style: TextStyle(color: AppColor.textSecondary),
+                            ),
+                            trailing: Text(
+                              "Rp ${t.amount.toStringAsFixed(0)}",
+                              style: TextStyle(
+                                color: t.type == "Pemasukan"
+                                    ? AppColor.income
+                                    : AppColor.expense,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         );

@@ -38,27 +38,34 @@ class _EditPageState extends State<EditPage> {
     ).showSnackBar(const SnackBar(content: Text("Transaksi dihapus")));
   }
 
-  // Fungsi untuk menampilkan dialog konfirmasi hapus
   void _showDeleteConfirmationDialog(TransactionModel transaction) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Konfirmasi Hapus"),
+          backgroundColor: AppColor.surface,
+          title: Text(
+            "Konfirmasi Hapus",
+            style: TextStyle(color: AppColor.textPrimary),
+          ),
           content: Text(
             "Apakah Anda yakin ingin menghapus transaksi '${transaction.note}'?",
+            style: TextStyle(color: AppColor.textPrimary),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text("Batal"),
+              child: Text(
+                "Batal",
+                style: TextStyle(color: AppColor.textPrimary),
+              ),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Tutup dialog
-                _deleteTransaction(transaction.id!); // Hapus transaksi
+                Navigator.of(context).pop();
+                _deleteTransaction(transaction.id!);
               },
-              child: const Text("Hapus", style: TextStyle(color: Colors.red)),
+              child: Text("Hapus", style: TextStyle(color: AppColor.expense)),
             ),
           ],
         );
@@ -70,9 +77,10 @@ class _EditPageState extends State<EditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: AppDrawer(),
+      backgroundColor: AppColor.background,
       appBar: AppBar(
         iconTheme: IconThemeData(color: AppColor.textPrimary),
-        backgroundColor: AppColor.background,
+        backgroundColor: AppColor.surface,
         title: Text(
           "Edit Transaksi",
           style: TextStyle(color: AppColor.textPrimary),
@@ -80,7 +88,12 @@ class _EditPageState extends State<EditPage> {
         centerTitle: true,
       ),
       body: transactions.isEmpty
-          ? Center(child: Text("Belum ada transaksi"))
+          ? Center(
+              child: Text(
+                "Belum ada transaksi",
+                style: TextStyle(color: AppColor.textPrimary),
+              ),
+            )
           : ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (context, index) {
@@ -88,37 +101,44 @@ class _EditPageState extends State<EditPage> {
                 return Dismissible(
                   key: Key(transaction.id.toString()),
                   background: Container(
-                    color: Colors.red,
+                    color: AppColor.expense,
                     alignment: Alignment.centerRight,
                     padding: EdgeInsets.only(right: 20),
                     child: Icon(Icons.delete, color: Colors.white),
                   ),
                   secondaryBackground: Container(
-                    color: Colors.red,
+                    color: AppColor.expense,
                     alignment: Alignment.centerLeft,
                     padding: EdgeInsets.only(left: 20),
                     child: Icon(Icons.delete, color: Colors.white),
                   ),
                   confirmDismiss: (direction) async {
-                    // Tampilkan dialog konfirmasi sebelum menghapus
                     return await showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text("Konfirmasi Hapus"),
+                          backgroundColor: AppColor.surface,
+                          title: Text(
+                            "Konfirmasi Hapus",
+                            style: TextStyle(color: AppColor.textPrimary),
+                          ),
                           content: Text(
                             "Apakah Anda yakin ingin menghapus transaksi '${transaction.note}'?",
+                            style: TextStyle(color: AppColor.textPrimary),
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(false),
-                              child: Text("Batal"),
+                              child: Text(
+                                "Batal",
+                                style: TextStyle(color: AppColor.textPrimary),
+                              ),
                             ),
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(true),
-                              child: const Text(
+                              child: Text(
                                 "Hapus",
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(color: AppColor.expense),
                               ),
                             ),
                           ],
@@ -133,6 +153,7 @@ class _EditPageState extends State<EditPage> {
                     }
                   },
                   child: Card(
+                    color: AppColor.surface,
                     margin: const EdgeInsets.symmetric(
                       vertical: 4,
                       horizontal: 8,
@@ -140,19 +161,26 @@ class _EditPageState extends State<EditPage> {
                     child: ListTile(
                       leading: Icon(
                         transaction.type == "Pemasukan"
-                            ? Icons.arrow_downward
-                            : Icons.arrow_upward,
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward,
                         color: transaction.type == "Pemasukan"
-                            ? Colors.green
-                            : Colors.red,
+                            ? AppColor.income
+                            : AppColor.expense,
                       ),
-                      title: Text(transaction.note),
+                      title: Text(
+                        transaction.note,
+                        style: TextStyle(color: AppColor.textPrimary),
+                      ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(transaction.categoryId),
+                          Text(
+                            transaction.categoryId,
+                            style: TextStyle(color: AppColor.textSecondary),
+                          ),
                           Text(
                             DateFormat('dd MMM yyyy').format(transaction.date),
+                            style: TextStyle(color: AppColor.textSecondary),
                           ),
                         ],
                       ),
@@ -167,13 +195,13 @@ class _EditPageState extends State<EditPage> {
                             ).format(transaction.amount),
                             style: TextStyle(
                               color: transaction.type == "Pemasukan"
-                                  ? Colors.green
-                                  : Colors.red,
+                                  ? AppColor.income
+                                  : AppColor.expense,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
+                            icon: Icon(Icons.delete, color: AppColor.expense),
                             onPressed: () {
                               _showDeleteConfirmationDialog(transaction);
                             },
@@ -181,7 +209,6 @@ class _EditPageState extends State<EditPage> {
                         ],
                       ),
                       onTap: () {
-                        // Navigasi ke halaman edit detail
                         _showEditDialog(transaction);
                       },
                     ),
@@ -193,7 +220,6 @@ class _EditPageState extends State<EditPage> {
   }
 
   void _showEditDialog(TransactionModel transaction) {
-    // Controller untuk form edit
     final TextEditingController amountController = TextEditingController(
       text: transaction.amount.toString(),
     );
@@ -225,28 +251,35 @@ class _EditPageState extends State<EditPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text("Edit Transaksi"),
+              backgroundColor: AppColor.surface,
+              title: Text(
+                "Edit Transaksi",
+                style: TextStyle(color: AppColor.textPrimary),
+              ),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // JENIS TRANSAKSI
                     DropdownButtonFormField<String>(
                       value: selectedType,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Jenis Transaksi',
+                        labelStyle: TextStyle(color: AppColor.textPrimary),
                         border: OutlineInputBorder(),
                       ),
+                      dropdownColor: AppColor.surface,
                       items: ['Pemasukan', 'Pengeluaran'].map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value),
+                          child: Text(
+                            value,
+                            style: TextStyle(color: AppColor.textPrimary),
+                          ),
                         );
                       }).toList(),
                       onChanged: (newValue) {
                         setState(() {
                           selectedType = newValue!;
-                          // Reset kategori sesuai jenis transaksi
                           selectedCategory = selectedType == 'Pemasukan'
                               ? 'Gaji'
                               : 'Makan';
@@ -254,14 +287,14 @@ class _EditPageState extends State<EditPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-
-                    // KATEGORI
                     DropdownButtonFormField<String>(
                       value: selectedCategory,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Kategori',
+                        labelStyle: TextStyle(color: AppColor.textPrimary),
                         border: OutlineInputBorder(),
                       ),
+                      dropdownColor: AppColor.surface,
                       items:
                           (selectedType == 'Pemasukan'
                                   ? pemasukkanCategories
@@ -269,7 +302,12 @@ class _EditPageState extends State<EditPage> {
                               .map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
-                                  child: Text(value),
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      color: AppColor.textPrimary,
+                                    ),
+                                  ),
                                 );
                               })
                               .toList(),
@@ -280,42 +318,61 @@ class _EditPageState extends State<EditPage> {
                       },
                     ),
                     const SizedBox(height: 16),
-
-                    // JUMLAH
                     TextFormField(
                       controller: amountController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: AppColor.textPrimary),
+                      decoration: InputDecoration(
                         labelText: "Jumlah (Rp)",
+                        labelStyle: TextStyle(color: AppColor.textPrimary),
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),
-
-                    // CATATAN
                     TextFormField(
                       controller: noteController,
-                      decoration: const InputDecoration(
+                      style: TextStyle(color: AppColor.textPrimary),
+                      decoration: InputDecoration(
                         labelText: "Catatan",
+                        labelStyle: TextStyle(color: AppColor.textPrimary),
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 2,
                     ),
                     const SizedBox(height: 16),
-
-                    // TANGGAL
                     Row(
                       children: [
-                        const Text("Tanggal: "),
-                        Text(DateFormat('dd MMM yyyy').format(selectedDate)),
+                        Text(
+                          "Tanggal: ",
+                          style: TextStyle(color: AppColor.textPrimary),
+                        ),
+                        Text(
+                          DateFormat('dd MMM yyyy').format(selectedDate),
+                          style: TextStyle(color: AppColor.textSecondary),
+                        ),
                         const Spacer(),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.button,
+                          ),
                           onPressed: () async {
                             final DateTime? picked = await showDatePicker(
                               context: context,
                               initialDate: selectedDate,
                               firstDate: DateTime(2020),
                               lastDate: DateTime(2100),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: ColorScheme.light(
+                                      primary: AppColor.button,
+                                      onPrimary: AppColor.textPrimary,
+                                      onSurface: AppColor.textPrimary,
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
                             );
                             if (picked != null && picked != selectedDate) {
                               setState(() {
@@ -323,7 +380,10 @@ class _EditPageState extends State<EditPage> {
                               });
                             }
                           },
-                          child: const Text("Pilih Tanggal"),
+                          child: Text(
+                            "Pilih Tanggal",
+                            style: TextStyle(color: AppColor.textPrimary),
+                          ),
                         ),
                       ],
                     ),
@@ -333,26 +393,26 @@ class _EditPageState extends State<EditPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Batal"),
+                  child: Text(
+                    "Batal",
+                    style: TextStyle(color: AppColor.textPrimary),
+                  ),
                 ),
-                // Tombol Hapus di dialog edit
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context); // Tutup dialog edit
-                    _showDeleteConfirmationDialog(
-                      transaction,
-                    ); // Tampilkan dialog hapus
+                    Navigator.pop(context);
+                    _showDeleteConfirmationDialog(transaction);
                   },
-                  child: const Text(
+                  child: Text(
                     "Hapus",
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: AppColor.expense),
                   ),
                 ),
                 TextButton(
                   onPressed: () async {
                     if (amountController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Jumlah harus diisi")),
+                        SnackBar(content: Text("Jumlah harus diisi")),
                       );
                       return;
                     }
@@ -368,12 +428,8 @@ class _EditPageState extends State<EditPage> {
                       );
                       await DbHelper.updateTransaction(updatedTransaction);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Transaksi berhasil diupdate"),
-                        ),
+                        SnackBar(content: Text("Transaksi berhasil diupdate")),
                       );
-
-                      // Reload data
                       _loadTransactions();
                       Navigator.pop(context);
                     } catch (e) {
@@ -382,7 +438,10 @@ class _EditPageState extends State<EditPage> {
                       ).showSnackBar(SnackBar(content: Text("Error: $e")));
                     }
                   },
-                  child: const Text("Simpan"),
+                  child: Text(
+                    "Simpan",
+                    style: TextStyle(color: AppColor.textPrimary),
+                  ),
                 ),
               ],
             );

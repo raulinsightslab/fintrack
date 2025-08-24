@@ -37,32 +37,6 @@ class _TambahPageState extends State<TambahPage> {
     _selectedCategory = _selectedType == 'Pemasukan' ? 'Gaji' : 'Makan';
   }
 
-  // Future<void> _pickDate(BuildContext context) async {
-  //   final DateTime? picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _selectedDate,
-  //     firstDate: DateTime(2020),
-  //     lastDate: DateTime(2100),
-  //     builder: (context, child) {
-  //       return Theme(
-  //         data: Theme.of(context).copyWith(
-  //           dialogBackgroundColor: AppColor.surface,
-  //           colorScheme: ColorScheme.light(
-  //             primary: AppColor.button,
-  //             onPrimary: AppColor.textPrimary,
-  //             onSurface: AppColor.textPrimary,
-  //           ),
-  //         ),
-  //         child: child!,
-  //       );
-  //     },
-  //   );
-  //   if (picked != null && picked != _selectedDate) {
-  //     setState(() {
-  //       _selectedDate = picked;
-  //     });
-  //   }
-  // }
   Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
