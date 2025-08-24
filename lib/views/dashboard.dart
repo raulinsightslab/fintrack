@@ -48,12 +48,15 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: AppColor.background,
       drawer: AppDrawer(),
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: AppColor.textPrimary, // warna icon drawer jadi putih
+        ),
         title: Text("Dompet", style: TextStyle(color: AppColor.textPrimary)),
         centerTitle: true,
         backgroundColor: AppColor.background,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
             // SALDO CARD
@@ -102,7 +105,7 @@ class _DashboardPageState extends State<DashboardPage> {
             const SizedBox(height: 20),
 
             // RIWAYAT TRANSAKSI TERBARU
-            const Text(
+            Text(
               "Transaksi Terbaru",
               style: TextStyle(
                 fontSize: 18,

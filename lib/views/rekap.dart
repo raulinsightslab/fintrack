@@ -1,5 +1,7 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
+import 'package:fintrack/utils/app_color.dart';
+import 'package:fintrack/widget/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -52,11 +54,12 @@ class _RekapPageState extends State<RekapPage> {
         .fold(0, (sum, c) => sum + c.amount);
 
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(title: const Text("Rekap Transaksi"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: transaksi.isEmpty
-            ? const Center(child: Text("Belum ada transaksi"))
+            ? Center(child: Text("Belum ada transaksi"))
             : Column(
                 children: [
                   // ==== PIE CHART PEMASUKAN VS PENGELUARAN ====
@@ -66,9 +69,9 @@ class _RekapPageState extends State<RekapPage> {
                       PieChartData(
                         sections: [
                           PieChartSectionData(
-                            color: Colors.green,
+                            color: AppColor.income,
                             value: totalIncome,
-                            title: "Income\n${totalIncome.toInt()}",
+                            title: "Pemasukan\n${totalIncome.toInt()}",
                             radius: 80,
                             titleStyle: const TextStyle(
                               color: Colors.white,
@@ -77,9 +80,9 @@ class _RekapPageState extends State<RekapPage> {
                             ),
                           ),
                           PieChartSectionData(
-                            color: Colors.red,
+                            color: AppColor.expense,
                             value: totalExpense,
-                            title: "Expense\n${totalExpense.toInt()}",
+                            title: "Pengeluaran\n${totalExpense.toInt()}",
                             radius: 80,
                             titleStyle: const TextStyle(
                               color: Colors.white,

@@ -1,6 +1,7 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
 import 'package:fintrack/utils/app_color.dart';
+import 'package:fintrack/widget/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -68,15 +69,18 @@ class _EditPageState extends State<EditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: AppDrawer(),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColor.textPrimary),
         backgroundColor: AppColor.background,
         title: Text(
           "Edit Transaksi",
           style: TextStyle(color: AppColor.textPrimary),
         ),
+        centerTitle: true,
       ),
       body: transactions.isEmpty
-          ? const Center(child: Text("Belum ada transaksi"))
+          ? Center(child: Text("Belum ada transaksi"))
           : ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (context, index) {
@@ -86,14 +90,14 @@ class _EditPageState extends State<EditPage> {
                   background: Container(
                     color: Colors.red,
                     alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 20),
-                    child: const Icon(Icons.delete, color: Colors.white),
+                    padding: EdgeInsets.only(right: 20),
+                    child: Icon(Icons.delete, color: Colors.white),
                   ),
                   secondaryBackground: Container(
                     color: Colors.red,
                     alignment: Alignment.centerLeft,
-                    padding: const EdgeInsets.only(left: 20),
-                    child: const Icon(Icons.delete, color: Colors.white),
+                    padding: EdgeInsets.only(left: 20),
+                    child: Icon(Icons.delete, color: Colors.white),
                   ),
                   confirmDismiss: (direction) async {
                     // Tampilkan dialog konfirmasi sebelum menghapus
@@ -108,7 +112,7 @@ class _EditPageState extends State<EditPage> {
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(false),
-                              child: const Text("Batal"),
+                              child: Text("Batal"),
                             ),
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(true),
@@ -352,7 +356,6 @@ class _EditPageState extends State<EditPage> {
                       );
                       return;
                     }
-
                     try {
                       final updatedTransaction = TransactionModel(
                         id: transaction.id,
@@ -363,9 +366,7 @@ class _EditPageState extends State<EditPage> {
                         note: noteController.text,
                         type: selectedType,
                       );
-
                       await DbHelper.updateTransaction(updatedTransaction);
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("Transaksi berhasil diupdate"),
@@ -374,7 +375,6 @@ class _EditPageState extends State<EditPage> {
 
                       // Reload data
                       _loadTransactions();
-
                       Navigator.pop(context);
                     } catch (e) {
                       ScaffoldMessenger.of(

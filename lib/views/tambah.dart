@@ -1,6 +1,7 @@
 import 'package:fintrack/model/transaksi.dart';
 import 'package:fintrack/sqflite/db_helper.dart';
 import 'package:fintrack/utils/app_color.dart';
+import 'package:fintrack/widget/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -33,16 +34,57 @@ class _TambahPageState extends State<TambahPage> {
   @override
   void initState() {
     super.initState();
-    // Set kategori default berdasarkan jenis transaksi
     _selectedCategory = _selectedType == 'Pemasukan' ? 'Gaji' : 'Makan';
   }
 
+  // Future<void> _pickDate(BuildContext context) async {
+  //   final DateTime? picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: _selectedDate,
+  //     firstDate: DateTime(2020),
+  //     lastDate: DateTime(2100),
+  //     builder: (context, child) {
+  //       return Theme(
+  //         data: Theme.of(context).copyWith(
+  //           dialogBackgroundColor: AppColor.surface,
+  //           colorScheme: ColorScheme.light(
+  //             primary: AppColor.button,
+  //             onPrimary: AppColor.textPrimary,
+  //             onSurface: AppColor.textPrimary,
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   if (picked != null && picked != _selectedDate) {
+  //     setState(() {
+  //       _selectedDate = picked;
+  //     });
+  //   }
+  // }
   Future<void> _pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: AppColor.button,
+              onPrimary: AppColor.surface,
+              onSurface: AppColor.transaksi,
+            ),
+            textTheme: TextTheme(
+              bodyLarge: TextStyle(color: Colors.black),
+              bodyMedium: TextStyle(color: Colors.black),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -54,13 +96,16 @@ class _TambahPageState extends State<TambahPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: AppColor.background,
+      backgroundColor: AppColor.background,
+      drawer: const AppDrawer(),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: AppColor.textPrimary),
         backgroundColor: AppColor.background,
-        title: const Text(
+        title: Text(
           "Tambah Transaksi",
           style: TextStyle(color: AppColor.textPrimary),
         ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -72,20 +117,27 @@ class _TambahPageState extends State<TambahPage> {
               // JENIS TRANSAKSI
               DropdownButtonFormField<String>(
                 value: _selectedType,
-                decoration: const InputDecoration(
+                dropdownColor: AppColor.surface,
+                decoration: InputDecoration(
                   labelText: 'Jenis Transaksi',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: AppColor.textPrimary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.textPrimary),
+                  ),
                 ),
+                style: TextStyle(color: AppColor.textPrimary),
                 items: ['Pemasukan', 'Pengeluaran'].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(
+                      value,
+                      style: TextStyle(color: AppColor.textPrimary),
+                    ),
                   );
                 }).toList(),
                 onChanged: (newValue) {
                   setState(() {
                     _selectedType = newValue!;
-                    // Set kategori default berdasarkan jenis transaksi
                     _selectedCategory = _selectedType == 'Pemasukan'
                         ? 'Gaji'
                         : 'Makan';
@@ -97,10 +149,15 @@ class _TambahPageState extends State<TambahPage> {
               // KATEGORI
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: const InputDecoration(
+                dropdownColor: AppColor.surface,
+                decoration: InputDecoration(
                   labelText: 'Kategori',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: AppColor.textPrimary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.textPrimary),
+                  ),
                 ),
+                style: TextStyle(color: AppColor.textPrimary),
                 items:
                     (_selectedType == 'Pemasukan'
                             ? pemasukkanCategories
@@ -108,7 +165,10 @@ class _TambahPageState extends State<TambahPage> {
                         .map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
-                            child: Text(value),
+                            child: Text(
+                              value,
+                              style: TextStyle(color: AppColor.textPrimary),
+                            ),
                           );
                         })
                         .toList(),
@@ -130,9 +190,13 @@ class _TambahPageState extends State<TambahPage> {
               TextFormField(
                 controller: _amountController,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+                style: TextStyle(color: AppColor.textPrimary),
+                decoration: InputDecoration(
                   labelText: "Jumlah (Rp)",
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: AppColor.textPrimary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.textPrimary),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -149,9 +213,13 @@ class _TambahPageState extends State<TambahPage> {
               // CATATAN
               TextFormField(
                 controller: _noteController,
-                decoration: const InputDecoration(
+                style: TextStyle(color: AppColor.textPrimary),
+                decoration: InputDecoration(
                   labelText: "Catatan",
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(color: AppColor.textPrimary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.textPrimary),
+                  ),
                 ),
                 maxLines: 2,
               ),
@@ -160,12 +228,24 @@ class _TambahPageState extends State<TambahPage> {
               // TANGGAL
               Row(
                 children: [
-                  const Text("Tanggal: "),
-                  Text(DateFormat('dd MMM yyyy').format(_selectedDate)),
+                  Text(
+                    "Tanggal: ",
+                    style: TextStyle(color: AppColor.textPrimary),
+                  ),
+                  Text(
+                    DateFormat('dd MMM yyyy').format(_selectedDate),
+                    style: TextStyle(color: AppColor.textPrimary),
+                  ),
                   const Spacer(),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColor.button,
+                    ),
                     onPressed: () => _pickDate(context),
-                    child: const Text("Pilih Tanggal"),
+                    child: Text(
+                      "Pilih Tanggal",
+                      style: TextStyle(color: AppColor.textPrimary),
+                    ),
                   ),
                 ],
               ),
@@ -175,7 +255,7 @@ class _TambahPageState extends State<TambahPage> {
               Center(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0A0F24),
+                    backgroundColor: AppColor.button,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 40,
                       vertical: 15,
@@ -183,7 +263,6 @@ class _TambahPageState extends State<TambahPage> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      // Pastikan kategori terpilih
                       if (_selectedCategory.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -195,7 +274,7 @@ class _TambahPageState extends State<TambahPage> {
 
                       try {
                         final transaction = TransactionModel(
-                          userId: 1, // Ganti dengan ID user yang login
+                          userId: 1,
                           categoryId: _selectedCategory,
                           amount: double.parse(_amountController.text),
                           date: _selectedDate,
@@ -210,16 +289,13 @@ class _TambahPageState extends State<TambahPage> {
                           ),
                         );
 
-                        // Reset form
                         _noteController.clear();
                         _amountController.clear();
                         setState(() {
                           _selectedType = 'Pemasukan';
-                          _selectedCategory = 'Gaji'; // Reset ke nilai default
+                          _selectedCategory = 'Gaji';
                           _selectedDate = DateTime.now();
                         });
-
-                        // Navigator.push();
                       } catch (e) {
                         ScaffoldMessenger.of(
                           context,
@@ -227,9 +303,9 @@ class _TambahPageState extends State<TambahPage> {
                       }
                     }
                   },
-                  child: const Text(
+                  child: Text(
                     "Simpan Transaksi",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColor.textPrimary),
                   ),
                 ),
               ),

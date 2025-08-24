@@ -17,10 +17,10 @@ class _BotbarState extends State<Botbar> {
   int selectedindex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    const DashboardPage(),
-    const TambahPage(),
-    const EditPage(),
-    const RekapPage(),
+    DashboardPage(),
+    TambahPage(),
+    EditPage(),
+    RekapPage(),
   ];
 
   @override
@@ -38,7 +38,7 @@ class _BotbarState extends State<Botbar> {
             selectedindex = value;
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: "Dashboard",
