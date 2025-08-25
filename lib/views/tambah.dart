@@ -90,7 +90,7 @@ class _TambahPageState extends State<TambahPage> {
             children: [
               // JENIS TRANSAKSI
               DropdownButtonFormField<String>(
-                value: _selectedType,
+                initialValue: _selectedType,
                 dropdownColor: AppColor.surface,
                 decoration: InputDecoration(
                   labelText: 'Jenis Transaksi',
@@ -122,7 +122,7 @@ class _TambahPageState extends State<TambahPage> {
 
               // KATEGORI
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 dropdownColor: AppColor.surface,
                 decoration: InputDecoration(
                   labelText: 'Kategori',

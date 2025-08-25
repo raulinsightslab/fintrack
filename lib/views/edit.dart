@@ -261,7 +261,7 @@ class _EditPageState extends State<EditPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     DropdownButtonFormField<String>(
-                      value: selectedType,
+                      initialValue: selectedType,
                       decoration: InputDecoration(
                         labelText: 'Jenis Transaksi',
                         labelStyle: TextStyle(color: AppColor.textPrimary),
@@ -288,7 +288,7 @@ class _EditPageState extends State<EditPage> {
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: selectedCategory,
+                      initialValue: selectedCategory,
                       decoration: InputDecoration(
                         labelText: 'Kategori',
                         labelStyle: TextStyle(color: AppColor.textPrimary),
@@ -317,7 +317,7 @@ class _EditPageState extends State<EditPage> {
                         });
                       },
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextFormField(
                       controller: amountController,
                       keyboardType: TextInputType.number,
@@ -328,7 +328,7 @@ class _EditPageState extends State<EditPage> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextFormField(
                       controller: noteController,
                       style: TextStyle(color: AppColor.textPrimary),

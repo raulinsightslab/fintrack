@@ -24,7 +24,7 @@ class _Day16SplashScreenState extends State<Day16SplashScreen> {
   void isLogin() async {
     bool? isLogin = await PreferenceHandler.getLogin();
 
-    Future.delayed(Duration(seconds: 10)).then((value) async {
+    Future.delayed(Duration(seconds: 3)).then((value) async {
       print(isLogin);
       if (isLogin == true) {
         context.pushReplacementNamed(DashboardPage.id);
@@ -60,7 +60,11 @@ class _Day16SplashScreenState extends State<Day16SplashScreen> {
               Text(
                 textAlign: TextAlign.center,
                 "Track Money\n Shape Your Future ",
-                style: TextStyle(fontSize: 16, color: AppColor.textPrimary),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: AppColor.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
